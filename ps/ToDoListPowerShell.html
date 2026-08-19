@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TO DO LIST FOR POWERSHELL</title>
+
+    <style>
+        :root {
+            --light-green: #dff5df;
+            --green: #2e7d32;
+            --dark-green: #1b5e20;
+            --yellow: #fff4b3;
+            --light-yellow: #fffbe6;
+            --white: #ffffff;
+            --text: #26332a;
+            --border: #b7d9b9;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #e8f8e8, #fff9cf);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: var(--green);
+            color: white;
+            text-align: center;
+            padding: 35px 20px;
+            border-radius: 18px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+            color: #efffea;
+        }
+
+        .progress-card {
+            background: var(--yellow);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 1px solid #eadb68;
+        }
+
+        .progress-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 22px;
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #d8c95b;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--green);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            margin-top: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .section {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 22px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.08);
+        }
+
+        .section h2 {
+            margin: 0;
+            padding: 16px 20px;
+            background: var(--light-green);
+            color: var(--dark-green);
+            font-size: 21px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .checklist {
+            padding: 15px 20px;
+        }
+
+        .task {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 8px;
+            margin: 3px 0;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .task:hover {
+            background: var(--light-yellow);
+        }
+
+        .task input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 3px;
+            accent-color: var(--green);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .task label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .task.completed label {
+            text-decoration: line-through;
+            color: #777;
+        }
+
+        .milestone {
+            background: var(--yellow);
+            border: 1px solid #eadb68;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 22px;
+        }
+
+        .milestone h2 {
+            margin-top: 0;
+            color: #665900;
+        }
+
+        .milestone p {
+            margin: 8px 0;
+        }
+
+        .rule {
+            background: var(--light-green);
+            border-left: 6px solid var(--green);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 17px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .save-btn {
+            background: var(--green);
+            color: white;
+        }
+
+        .reset-btn {
+            background: #fff0a8;
+            color: #5c5000;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        .footer {
+            text-align: center;
+            color: #55705a;
+            padding: 15px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 15px auto;
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 25px;
+            }
+
+            .section h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .buttons {
+                display: none;
+            }
+
+            .section {
+                box-shadow: none;
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="header">
+        <h1>TO DO LIST FOR POWERSHELL</h1>
+        <p>PowerShell Learning & Automation Checklist</p>
+    </header>
+
+    <div class="progress-card">
+        <div class="progress-title">Overall Progress</div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="progress-text" id="progressText">
+            0% Complete
+        </div>
+    </div>
+
+
+    <!-- SECTION 1 -->
+    <section class="section">
+        <h2>1. Foundations</h2>
+
+        <div class="checklist">
+
+            <div class="task">
+                <input type="checkbox" id="task1">
+                <label for="task1">Understand what PowerShell is and what it is used for</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task2">
+                <label for="task2">Install and open PowerShell 7</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task3">
+                <label for="task3">Learn the difference between PowerShell, Command Prompt, and Bash</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task4">
+                <label for="task4">Understand commands, parameters, and arguments</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task5">
+                <label for="task5">Learn how to use Get-Help</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task6">
+                <label for="task6">Learn how to use Get-Command</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task7">
+                <label for="task7">Learn how to use Get-Member</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task8">
+                <label for="task8">Practice command discovery with Get-Verb</label>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- SECTION 2 -->
+    <section class="section">
+        <h2>2. Core PowerShell</h2>
+
+        <div class="checklist">
+
+            <div class="task">
+                <input type="checkbox" id="task9">
+                <label for="task9">Understand objects and the PowerShell pipeline</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task10">
+                <label for="task10">Practice the pipeline operator |</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task11">
+                <label for="task11">Learn variables</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task12">
+                <label for="task12">Learn strings, numbers, arrays, and hash tables</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task13">
+                <label for="task13">Learn comparison operators</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task14">
+                <label for="task14">Learn logical operators</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task15">
+                <label for="task15">Learn if, elseif, and else</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task16">
+                <label for="task16">Learn foreach and ForEach-Object</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task17">
+                <label for="task17">Learn while and do...while</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task18">
+                <label for="task18">Learn switch</label>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- SECTION 3 -->
+    <section class="section">
+        <h2>3. Files and Folders</h2>
+
+        <div class="checklist">
+
+            <div class="task">
+                <input type="checkbox" id="task19">
+                <label for="task19">Navigate directories with Get-Location, Set-Location, and Get-ChildItem</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task20">
+                <label for="task20">Create files and folders</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task21">
+                <label for="task21">Copy, move, rename, and delete files</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task22">
+                <label for="task22">Read and modify text files</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task23">
+                <label for="task23">Learn Test-Path</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task24">
+                <label for="task24">Filter files by extension, size, and date</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task25">
+                <label for="task25">Build a script that automatically organizes files</label>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- SECTION 4 -->
+    <section class="section">
+        <h2>4. Pipeline and Objects</h2>
+
+        <div class="checklist">
+
+            <div class="task">
+                <input type="checkbox" id="task26">
+                <label for="task26">Understand how objects flow through the pipeline</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task27">
+                <label for="task27">Practice Where-Object</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task28">
+                <label for="task28">Practice Select-Object</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task29">
+                <label for="task29">Practice Sort-Object</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task30">
+                <label for="task30">Practice ForEach-Object</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task31">
+                <label for="task31">Practice Measure-Object</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task32">
+                <label for="task32">Learn Format-Table and Format-List</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task33">
+                <label for="task33">Understand why Format-* commands generally belong at the end of a pipeline</label>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- SECTION 5 -->
+    <section class="section">
+        <h2>5. Scripting</h2>
+
+        <div class="checklist">
+
+            <div class="task">
+                <input type="checkbox" id="task34">
+                <label for="task34">Create your first .ps1 script</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task35">
+                <label for="task35">Learn comments and code organization</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task36">
+                <label for="task36">Create and use functions</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task37">
+                <label for="task37">Learn function parameters</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task38">
+                <label for="task38">Learn param()</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task39">
+                <label for="task39">Return values from functions</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task40">
+                <label for="task40">Learn error handling with try, catch, and finally</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task41">
+                <label for="task41">Learn Write-Verbose, Write-Warning, and Write-Error</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task42">
+                <label for="task42">Learn basic debugging in VS Code</label>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- SECTION 6 -->
+    <section class="section">
+        <h2>6. System Administration</h2>
+
+        <div class="checklist">
+
+            <div class="task">
+                <input type="checkbox" id="task43">
+                <label for="task43">Explore processes with Get-Process</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task44">
+                <label for="task44">Explore services with Get-Service</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task45">
+                <label for="task45">Learn basic event-log querying</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task46">
+                <label for="task46">Learn environment variables</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task47">
+                <label for="task47">Learn Windows Registry basics</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task48">
+                <label for="task48">Learn scheduled tasks</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task49">
+                <label for="task49">Practice gathering system information</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task50">
+                <label for="task50">Write a script that generates a basic system report</label>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- SECTION 7 -->
+    <section class="section">
+        <h2>7. Networking</h2>
+
+        <div class="checklist">
+
+            <div class="task">
+                <input type="checkbox" id="task51">
+                <label for="task51">Learn Test-Connection</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task52">
+                <label for="task52">Learn Test-NetConnection</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task53">
+                <label for="task53">Practice DNS-related commands</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task54">
+                <label for="task54">Learn basic IP and networking concepts</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task55">
+                <label for="task55">Practice querying network adapters</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task56">
+                <label for="task56">Write a basic network troubleshooting script</label>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- SECTION 8 -->
+    <section class="section">
+        <h2>8. Advanced PowerShell</h2>
+
+        <div class="checklist">
+
+            <div class="task">
+                <input type="checkbox" id="task57">
+                <label for="task57">Learn modules</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task58">
+                <label for="task58">Learn Import-Module</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task59">
+                <label for="task59">Learn how to find and install modules</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task60">
+                <label for="task60">Understand PowerShell profiles</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task61">
+                <label for="task61">Learn PowerShell remoting</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task62">
+                <label for="task62">Learn PowerShell jobs</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task63">
+                <label for="task63">Learn background execution</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task64">
+                <label for="task64">Understand execution policies</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task65">
+                <label for="task65">Learn PowerShell security best practices</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task66">
+                <label for="task66">Explore REST APIs with Invoke-RestMethod</label>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- SECTION 9 -->
+    <section class="section">
+        <h2>9. Automation Projects</h2>
+
+        <div class="checklist">
+
+            <div class="task">
+                <input type="checkbox" id="task67">
+                <label for="task67">Build a file-organizer script</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task68">
+                <label for="task68">Build a system-information script</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task69">
+                <label for="task69">Build a backup script</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task70">
+                <label for="task70">Build a process-monitoring script</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task71">
+                <label for="task71">Build a log-search tool</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task72">
+                <label for="task72">Build a network diagnostic script</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task73">
+                <label for="task73">Build an automated cleanup script</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task74">
+                <label for="task74">Create one larger project combining several skills</label>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- SECTION 10 -->
+    <section class="section">
+        <h2>10. Become Comfortable</h2>
+
+        <div class="checklist">
+
+            <div class="task">
+                <input type="checkbox" id="task75">
+                <label for="task75">Stop relying on aliases when writing scripts</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task76">
+                <label for="task76">Learn to read PowerShell error messages</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task77">
+                <label for="task77">Use Get-Help instead of trying to memorize every command</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task78">
+                <label for="task78">Learn to combine commands using pipelines</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task79">
+                <label for="task79">Read other people's PowerShell scripts</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task80">
+                <label for="task80">Rewrite old scripts to make them cleaner</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task81">
+                <label for="task81">Practice writing scripts without copying solutions</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task82">
+                <label for="task82">Keep a personal PowerShell command reference</label>
+            </div>
+
+            <div class="task">
+                <input type="checkbox" id="task83">
+                <label for="task83">Solve increasingly difficult automation problems</label>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- LEARNING PATH -->
+    <div class="milestone">
+        <h2>Recommended Learning Path</h2>
+
+        <p><strong>🟢 Beginner:</strong> Sections 1–4</p>
+        <p><strong>🟡 Intermediate:</strong> Sections 5–7</p>
+        <p><strong>🟢 Advanced:</strong> Sections 8–10</p>
+    </div>
+
+
+    <!-- LEARNING RULE -->
+    <div class="rule">
+        <strong>💡 Learning Rule:</strong><br>
+        Learn a concept → Write a small script → Modify it → Use it to solve a real problem.
+    </div>
+
+
+    <div class="buttons">
+        <button class="save-btn" onclick="saveProgress()">
+            💾 Save Progress
+        </button>
+
+        <button class="reset-btn" onclick="resetProgress()">
+            🔄 Reset Checklist
+        </button>
+    </div>
+
+
+    <footer class="footer">
+        PowerShell Learning Checklist • Keep learning, keep automating!
+    </footer>
+
+</div>
+
+
+<script>
+    const checkboxes = document.querySelectorAll(
+        'input[type="checkbox"]'
+    );
+
+    function updateProgress() {
+
+        const total = checkboxes.length;
+
+        let completed = 0;
+
+        checkboxes.forEach(function(checkbox) {
+
+            const task = checkbox.closest(".task");
+
+            if (checkbox.checked) {
+                completed++;
+                task.classList.add("completed");
+            } else {
+                task.classList.remove("completed");
+            }
+
+        });
+
+        const percentage =
+            total === 0
+                ? 0
+                : Math.round((completed / total) * 100);
+
+        document.getElementById("progressFill").style.width =
+            percentage + "%";
+
+        document.getElementById("progressText").textContent =
+            completed + " / " + total +
+            " completed — " + percentage + "%";
+    }
+
+
+    function saveProgress() {
+
+        const progress = {};
+
+        checkboxes.forEach(function(checkbox) {
+            progress[checkbox.id] = checkbox.checked;
+        });
+
+        localStorage.setItem(
+            "powershellChecklist",
+            JSON.stringify(progress)
+        );
+
+        alert("Your PowerShell checklist progress has been saved!");
+    }
+
+
+    function loadProgress() {
+
+        const saved =
+            localStorage.getItem("powershellChecklist");
+
+        if (!saved) {
+            updateProgress();
+            return;
+        }
+
+        const progress = JSON.parse(saved);
+
+        checkboxes.forEach(function(checkbox) {
+
+            if (progress[checkbox.id] !== undefined) {
+                checkbox.checked =
+                    progress[checkbox.id];
+            }
+
+        });
+
+        updateProgress();
+    }
+
+
+    function resetProgress() {
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to reset your entire checklist?"
+            );
+
+        if (!confirmed) return;
+
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = false;
+        });
+
+        localStorage.removeItem(
+            "powershellChecklist"
+        );
+
+        updateProgress();
+    }
+
+
+    checkboxes.forEach(function(checkbox) {
+
+        checkbox.addEventListener(
+            "change",
+            updateProgress
+        );
+
+    });
+
+
+    loadProgress();
+</script>
+
+</body>
+</html>
